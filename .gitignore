@@ -1,0 +1,10 @@
+service.*/build/
+cron.*/build/
+
+.env
+
+mongo-data
+
+# IntelliJ
+.idea
+*.iml
