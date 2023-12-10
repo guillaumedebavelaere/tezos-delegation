@@ -1,35 +1,32 @@
 package tezos
 
 import (
-	"time"
-
-	"github.com/imroc/req/v3"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/http"
 )
 
-// ClientConfig represents the configuration used when creating a new HTTP Client.
-type ClientConfig struct {
-	Debug   bool
-	BaseURL string        `validate:"required,url"`
-	Timeout time.Duration `validate:"required"`
+// Config defines tezos client configuration.
+type Config struct {
+	HTTP http.ClientConfig `mapstructure:",squash"`
 }
 
-// Client defines tezos client.
 type Client struct {
-	client *req.Client
+	http.Client
+	cfg *Config
 }
 
-// New returns a new tezos client.
-func New(cfg *ClientConfig) (*Client, error) {
-	c := &Client{
-		client: req.NewClient(),
+// NewClient creates a new tezos client.
+func NewClient(cfg *Config, options ...http.Option) API {
+	return &Client{
+		Client: http.NewClient(&cfg.HTTP, options...),
+		cfg:    cfg,
+	}
+}
+
+// Init initializes tezos client.
+func (h *Client) Init() error {
+	if err := h.Client.Init(); err != nil {
+		return err
 	}
 
-	c.client = c.client.SetBaseURL(cfg.BaseURL).
-		SetTimeout(cfg.Timeout)
-
-	if cfg.Debug {
-		c.client = c.client.DevMode()
-	}
-
-	return c, nil
+	return nil
 }

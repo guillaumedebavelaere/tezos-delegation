@@ -1,6 +1,7 @@
 package config
 
 import (
+	"os"
 	"strings"
 
 	"github.com/go-playground/validator/v10"
@@ -16,6 +17,8 @@ const (
 	EnvDev = "dev"
 )
 
+const path = "config"
+
 // Parse parses a configuration.
 func Parse(name string, config interface{}) error {
 	v := viper.NewWithOptions()
@@ -24,7 +27,18 @@ func Parse(name string, config interface{}) error {
 	appNameUpper := strings.ToUpper(name)
 
 	v.SetConfigType("yaml")
-	v.AddConfigPath("config")
+
+	folders := []string{getEnv(appNameUpper+"_CONFIG_PATH", path)}
+	// use paths if defined
+	if folders != nil {
+		for _, folderPath := range folders {
+			v.AddConfigPath(folderPath)
+		}
+	} else {
+		// or use current path by default
+		v.AddConfigPath(".")
+	}
+
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	// env prefix will be upper-cased automatically
 	v.SetEnvPrefix(appNameUpper)
@@ -64,4 +78,12 @@ func configureDotEnv(v *viper.Viper) {
 			zap.L().Info(".env file successfully loaded")
 		}
 	}
+}
+
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+
+	return fallback
 }

@@ -12,14 +12,17 @@ const (
 	delegationsResource = "operations/delegations"
 )
 
+// Sender describes the sender in tezos API.
+type Sender struct {
+	Address string `json:"address"`
+}
+
 // Delegation represents the tezos delegation model.
 type Delegation struct {
 	Timestamp time.Time
-	Amount    int64 `json:"amount"`
-	Sender    struct {
-		Address string `json:"address"`
-	} `json:"sender"`
-	Block string `json:"block"`
+	Amount    int64  `json:"amount"`
+	Sender    Sender `json:"sender"`
+	Block     string `json:"block"`
 }
 
 // ListDelegations returns delegations list.
@@ -40,7 +43,7 @@ func (c *Client) ListDelegations(ctx context.Context, fromTimestamp *time.Time) 
 
 	delegations := []*Delegation{}
 
-	resp, err := c.client.R().
+	resp, err := c.C().R().
 		SetContext(ctx).
 		SetSuccessResult(&delegations).
 		SetQueryParams(params).
@@ -58,7 +61,7 @@ func (c *Client) ListDelegations(ctx context.Context, fromTimestamp *time.Time) 
 			zap.String("body", resp.String()),
 		)
 
-		return nil, fmt.Errorf("couldn't list delegations from tezos api: %s", resp.String())
+		return nil, fmt.Errorf("couldn't list delegations from tezos api error: %s", resp.String())
 	}
 
 	return delegations, nil

@@ -23,6 +23,11 @@ mage build
 mage lint
 ```
 
+### Run all tests
+```bash
+mage test:unit
+```
+
 ### Start a mongodb docker container
 ```bash
 mage mongodb:start 

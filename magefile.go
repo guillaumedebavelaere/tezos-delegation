@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mage/discovery"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/test"
 	"github.com/guillaumedebavelaere/tezos-delegation/tools/mage/lint"
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -21,8 +22,10 @@ func Help() error {
 		{"Command", "Description", "Usage"},
 		{"mage -l", "Print every available command", "mage -l"},
 		{"help", "Show this help", "mage help"},
+		{"clean", "Clean every micro services and crons", "mage clean"},
 		{"build", "Build every micro services and crons", "mage build"},
 		{"lint", "Run all linters", "mage lint"},
+		{"test:unit", "Run unit tests", "mage test:unit"},
 		{"mongodb:start", "starts a MongoDB Docker container", "mage mongosb:start"},
 		{"mongodb:stop", "stops a MongoDB Docker container", "mage mongodb:stop"},
 		{"mongodb:status", "checks the status of the MongoDB Docker container", "mage mongodb:status"},
@@ -36,22 +39,9 @@ func Build() error {
 	return executeToServices("build")
 }
 
-func executeToServices(cmd string) error {
-	services, err := discovery.DiscoverServices("./")
-	if err != nil {
-		return err
-	}
-
-	for _, service := range services {
-		if err := sh.RunV(
-			"mage", "-d",
-			fmt.Sprintf("%s", service),
-			cmd); err != nil {
-			return err
-		}
-	}
-
-	return nil
+// Clean cleans all services.
+func Clean() error {
+	return executeToServices("clean")
 }
 
 // Lint runs all linters.
@@ -70,6 +60,22 @@ func Lint() error {
 	}
 
 	pterm.Success.Println("Successfully finished golangci-lint")
+
+	return nil
+}
+
+// Test defines the main target.
+type Test mg.Namespace
+
+// Unit unit test all services.
+func (t Test) Unit() error {
+	pterm.Info.Println("Running unit tests for github.com/guillaumedebavelaere/tezos-delegation")
+
+	if err := test.Unit("github.com/guillaumedebavelaere/tezos-delegation"); err != nil {
+		return err
+	}
+
+	pterm.Success.Println("Successfully unit test service github.com/guillaumedebavelaere/tezos-delegation")
 
 	return nil
 }
@@ -135,5 +141,23 @@ func (m MongoDB) Status() error {
 	}
 
 	pterm.Info.Printfln("MongoDB container status: %s\n", output)
+	return nil
+}
+
+func executeToServices(cmd string) error {
+	services, err := discovery.DiscoverServices("./")
+	if err != nil {
+		return err
+	}
+
+	for _, service := range services {
+		if err := sh.RunV(
+			"mage", "-d",
+			fmt.Sprintf("%s", service),
+			cmd); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

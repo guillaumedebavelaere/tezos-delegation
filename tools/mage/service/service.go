@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mage/gen"
 	"os"
 
 	"github.com/magefile/mage/sh"
@@ -10,8 +11,19 @@ import (
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mage/build"
 )
 
-// Name defines service name.
-var Name string
+var (
+	// Name defines service name.
+	Name string
+	// GenFiles defines file to generate inside service.
+	GenFiles []*gen.File
+)
+
+// Clean cleans binaries and deliveries.
+func Clean() error {
+	pterm.Info.Printfln("Cleaning builds %s", Name)
+
+	return sh.Rm("build")
+}
 
 // Build builds the service.
 func Build() error {
@@ -31,6 +43,21 @@ func Build() error {
 	}
 
 	pterm.Success.Printfln("Successfully built service %s", Name)
+
+	return nil
+}
+
+// Gen generate files.
+func Gen() error {
+	for _, file := range GenFiles {
+		pterm.Info.Printfln("Generating service.%s %s %s", Name, file.Type, file.Name)
+
+		if err := gen.Gen(file); err != nil {
+			return err
+		}
+
+		pterm.Info.Printfln("Successfully generated service.%s %s %s", Name, file.Type, file.Name)
+	}
 
 	return nil
 }

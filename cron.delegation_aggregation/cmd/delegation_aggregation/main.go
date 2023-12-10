@@ -22,7 +22,7 @@ func run() int {
 	var cfg struct {
 		Debug bool
 		API   struct {
-			Tezos tezos.ClientConfig
+			Tezos tezos.Config
 		}
 		Datastore struct {
 			Mongo mongosvc.Config
@@ -44,7 +44,9 @@ func run() int {
 
 	log.Configure(cfg.Debug)
 
-	tezosService, err := tezos.New(&cfg.API.Tezos)
+	tezosService := tezos.NewClient(&cfg.API.Tezos)
+
+	err := tezosService.Init()
 	if err != nil {
 		zap.L().Error("couldn't create new tezos service", zap.Error(err))
 
