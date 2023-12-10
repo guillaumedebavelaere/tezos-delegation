@@ -35,7 +35,6 @@ func (c *Cron) Run() error {
 	}
 
 	zap.L().Info("list delegations from tezos service ...")
-	// list delegations which will be stored
 	var latestTimestamp *time.Time
 	if latestDelegation != nil {
 		latestTimestamp = &latestDelegation.Timestamp

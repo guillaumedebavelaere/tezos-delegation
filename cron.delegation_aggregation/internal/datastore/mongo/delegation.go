@@ -10,14 +10,18 @@ import (
 )
 
 func (d *Datastore) StoreDelegations(ctx context.Context, delegations []*model.Delegation) error {
-	// Convert the Delegation slice to an interface slice for bulk insertion
-	documents := make([]interface{}, len(delegations))
-	for i, delegation := range delegations {
-		documents[i] = delegation
+	// Create a slice of WriteModels for the bulk write
+	var writeModels []mongo.WriteModel
+	for _, delegation := range delegations {
+		upsert := mongo.NewUpdateOneModel().
+			SetFilter(bson.M{"timestamp": delegation.Timestamp}).
+			SetUpdate(bson.D{{"$set", delegation}}).
+			SetUpsert(true)
+		writeModels = append(writeModels, upsert)
 	}
 
-	// Perform bulk insertion
-	_, err := d.delegations.UpdateMany()InsertMany(ctx, documents)
+	// Execute the bulk write
+	_, err := d.delegations.BulkWrite(context.Background(), writeModels)
 	if err != nil {
 		return err
 	}

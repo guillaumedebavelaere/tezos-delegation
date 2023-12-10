@@ -9,3 +9,6 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: $TEZOS_DELEGATION_MONGO_INITDB_ROOT_PASSWORD
       MONGO_INITDB_ROOT_USERNAME: $TEZOS_DELEGATION_MONGO_INITDB_ROOT_USERNAME
       MONGO_INITDB_DATABASE: tezos_delegation
+    volumes:
+      - ./init-script.js:/docker-entrypoint-initdb.d/init-script.js
+      - ./mongo-data:/data/db
