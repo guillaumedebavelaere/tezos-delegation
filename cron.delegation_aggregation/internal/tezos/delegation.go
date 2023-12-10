@@ -31,7 +31,7 @@ func (c *Client) ListDelegations(ctx context.Context, fromTimestamp *time.Time) 
 
 	if fromTimestamp != nil {
 		// filter by timestamp greater than fromTimestamp
-		params["timestamp.gt"] = fromTimestamp.String()
+		params["timestamp.gt"] = fromTimestamp.UTC().Format(time.RFC3339)
 		// couldn't sort by timestamp, but sort by id descending seems to be correlated, to confirm with tezos team.
 		params["sort.asc"] = "id"
 
