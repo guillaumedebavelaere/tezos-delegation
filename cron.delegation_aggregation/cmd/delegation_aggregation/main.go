@@ -1,18 +1,21 @@
 package main
 
 import (
+	"os"
+
+	"go.uber.org/zap"
+
 	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/cron"
 	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore/mongo"
 	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos"
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/config"
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/log"
 	mongosvc "github.com/guillaumedebavelaere/tezos-delegation/pkg/mongo"
-	"go.uber.org/zap"
-	"os"
 )
 
 const appName = "delegation_aggregation"
 
+//nolint:funlen
 func run() int {
 	log.SetDefaultZap()
 

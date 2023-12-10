@@ -5,6 +5,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// SetDefaultZap sets default zap logger.
 func SetDefaultZap() {
 	config := zap.Config{
 		Level:       zap.NewAtomicLevelAt(zap.InfoLevel),

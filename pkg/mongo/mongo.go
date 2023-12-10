@@ -2,12 +2,14 @@ package mongo
 
 import (
 	"context"
+	"time"
+
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"time"
 )
 
+// Config describes the mongo client configuration.
 type Config struct {
 	URI               string        `validate:"required"`
 	ConnectTimeout    time.Duration `validate:"required"`
@@ -29,7 +31,6 @@ func New(cfg *Config) Client {
 
 // Init initialize the mongo client.
 func (c *client) Init() error {
-
 	mongoClient, err := mongo.Connect(
 		context.Background(),
 		options.Client().

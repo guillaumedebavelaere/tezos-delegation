@@ -1,7 +1,10 @@
 package mongo
 
-import "go.mongodb.org/mongo-driver/mongo"
-import mongosvc "github.com/guillaumedebavelaere/tezos-delegation/pkg/mongo"
+import (
+	"go.mongodb.org/mongo-driver/mongo"
+
+	mongosvc "github.com/guillaumedebavelaere/tezos-delegation/pkg/mongo"
+)
 
 const (
 	database              = "tezos_delegation"
@@ -25,7 +28,6 @@ func New(client mongosvc.Client) *Datastore {
 func (d *Datastore) Init() error {
 	err := d.client.Init()
 	if err != nil {
-
 		return err
 	}
 

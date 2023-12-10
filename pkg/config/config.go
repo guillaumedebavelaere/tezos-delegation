@@ -1,11 +1,12 @@
 package config
 
 import (
+	"strings"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
-	"strings"
 )
 
 const (
@@ -21,6 +22,7 @@ func Parse(name string, config interface{}) error {
 
 	v.SetConfigName(name)
 	appNameUpper := strings.ToUpper(name)
+
 	v.SetConfigType("yaml")
 	v.AddConfigPath("config")
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -31,6 +33,7 @@ func Parse(name string, config interface{}) error {
 	// Read the configuration file
 	if err := v.ReadInConfig(); err != nil {
 		zap.L().Error("Error reading config file", zap.Error(err))
+
 		return err
 	}
 
@@ -39,6 +42,7 @@ func Parse(name string, config interface{}) error {
 	// Unmarshal the configuration into a struct
 	if err := v.Unmarshal(config); err != nil {
 		zap.L().Error("Error unmarshalling config", zap.Error(err))
+
 		return err
 	}
 
@@ -48,6 +52,7 @@ func Parse(name string, config interface{}) error {
 // Validate validates a configuration.
 func Validate(config interface{}) error {
 	v := validator.New()
+
 	return v.Struct(config)
 }
 

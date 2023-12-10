@@ -2,6 +2,7 @@ service.*/build/
 cron.*/build/
 
 .env
+.ci
 
 mongo-data
 

@@ -3,8 +3,9 @@ package tezos
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 const (
@@ -23,7 +24,6 @@ type Delegation struct {
 
 // ListDelegations returns delegations list.
 func (c *Client) ListDelegations(ctx context.Context, fromTimestamp *time.Time) ([]*Delegation, error) {
-
 	params := map[string]string{}
 	// select only needed fields
 	params["select"] = "timestamp,amount,sender,block"
@@ -34,18 +34,17 @@ func (c *Client) ListDelegations(ctx context.Context, fromTimestamp *time.Time) 
 		params["timestamp.gt"] = fromTimestamp.UTC().Format(time.RFC3339)
 		// couldn't sort by timestamp, but sort by id descending seems to be correlated, to confirm with tezos team.
 		params["sort.asc"] = "id"
-
 	} else {
 		params["sort.desc"] = "id"
 	}
 
 	delegations := []*Delegation{}
+
 	resp, err := c.client.R().
 		SetContext(ctx).
 		SetSuccessResult(&delegations).
 		SetQueryParams(params).
 		Get(delegationsResource)
-
 	if err != nil {
 		zap.L().Error("couldn't list delegations from tezos api", zap.Error(err))
 
@@ -63,5 +62,4 @@ func (c *Client) ListDelegations(ctx context.Context, fromTimestamp *time.Time) 
 	}
 
 	return delegations, nil
-
 }

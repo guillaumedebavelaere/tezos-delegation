@@ -18,9 +18,14 @@ You can do a `mage` to get a list of available commands.
 mage build
 ```
 
+### Lint all
+```bash
+mage lint
+```
+
 ### Start a mongodb docker container
 ```bash
-mage mongoDBStart 
+mage mongodb:start 
 ```
 
 ### Run delegation aggregation cron                                

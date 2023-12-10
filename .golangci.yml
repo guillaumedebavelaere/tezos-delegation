@@ -1,0 +1,79 @@
+# See https://golangci-lint.run/usage/configuration/ for a list of
+# all available configuration options with their default values
+
+# options for analysis running
+run:
+  # timeout for analysis, e.g. 30s, 5m, default is 1m
+  timeout: 30m
+
+  # exit code when at least one issue was found, default is 1
+  issues-exit-code: 1
+
+# all available settings of specific linters
+linters-settings:
+  cyclop:
+    # The maximal code complexity to report.
+    # Default: 10
+    max-complexity: 15
+    # The maximal average package complexity.
+    # If it's higher than 0.0 (float) the check is enabled
+    # Default: 0.0
+    package-average: 0.0
+    # Should ignore tests.
+    # Default: false
+    skip-tests: true
+  gci:
+    sections:
+      - standard # Captures all standard packages if they do not match another section.
+      - default # Contains all imports that could not be matched to another section type.
+      - prefix(github.com/guillaumedebavelaere)
+    section-separators:
+      - newLine
+  funlen:
+    lines: 60
+    statements: 40
+issues:
+  exclude-rules:
+    # Disable linters that are annoying in tests.
+    # forcetypeassert is disabled because types must be checked with require/assert instead of if/error logic
+    - path: (_test|_mock)\.go
+      linters:
+        [
+          dupl,
+          funlen,
+          forcetypeassert,
+          gochecknoglobals,
+          maintidx,
+          nosnakecase,
+          varnamelen,
+          goconst,
+        ]
+linters:
+  enable-all: true
+  disable:
+    # disable deprecated linters
+    - golint
+    - maligned
+    - interfacer
+    - scopelint
+    - structcheck
+    - ifshort
+    - varcheck
+    - deadcode
+    # disable some linter (from most to less annoying)
+    - exhaustivestruct
+    - exhaustruct
+    - depguard
+    - wrapcheck
+    - tagliatelle
+    - varnamelen
+    - gochecknoglobals
+    - godox
+    - gomnd
+    - gomoddirectives
+    - ireturn
+    - goerr113
+    - tagalign
+    - nosnakecase
+    - musttag
+  fast: false

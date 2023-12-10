@@ -2,16 +2,16 @@ package service
 
 import (
 	"fmt"
-	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mage/build"
+	"os"
+
 	"github.com/magefile/mage/sh"
 	"github.com/pterm/pterm"
-	"os"
+
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mage/build"
 )
 
-var (
-	// Name defines service name.
-	Name string
-)
+// Name defines service name.
+var Name string
 
 // Build builds the service.
 func Build() error {
@@ -35,13 +35,14 @@ func Build() error {
 	return nil
 }
 
-// Run target runs the service
+// Run target runs the service.
 func Run() error {
 	pterm.Info.Printfln("Running service %s", Name)
 
 	err := sh.RunWithV(map[string]string{}, "go", "run", fmt.Sprintf("cmd/%s/main.go", Name))
 	if err != nil {
 		pterm.Error.Printfln("Failed to run service %s", Name)
+
 		return err
 	}
 

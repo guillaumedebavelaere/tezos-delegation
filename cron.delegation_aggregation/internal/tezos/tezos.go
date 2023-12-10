@@ -1,8 +1,9 @@
 package tezos
 
 import (
-	"github.com/imroc/req/v3"
 	"time"
+
+	"github.com/imroc/req/v3"
 )
 
 // ClientConfig represents the configuration used when creating a new HTTP Client.
@@ -19,7 +20,6 @@ type Client struct {
 
 // New returns a new tezos client.
 func New(cfg *ClientConfig) (*Client, error) {
-
 	c := &Client{
 		client: req.NewClient(),
 	}

@@ -2,11 +2,13 @@ package cron
 
 import (
 	"context"
+	"time"
+
+	"go.uber.org/zap"
+
 	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore"
 	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore/model"
 	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos"
-	"go.uber.org/zap"
-	"time"
 )
 
 // Cron describes the delegation aggregation Cron.
@@ -35,9 +37,11 @@ func (c *Cron) Run() error {
 	}
 
 	zap.L().Info("list delegations from tezos service ...")
+
 	var latestTimestamp *time.Time
 	if latestDelegation != nil {
 		latestTimestamp = &latestDelegation.Timestamp
+
 		zap.L().Info("from timestamp", zap.Any("latestTimestamp", latestTimestamp))
 	}
 
@@ -48,11 +52,13 @@ func (c *Cron) Run() error {
 
 	if len(delegations) == 0 {
 		zap.L().Info("no new delegations found")
+
 		return nil
 	}
 
 	zap.L().Info("found", zap.Int("delegations", len(delegations)))
 	zap.L().Info("store delegations in datastore...")
+
 	err = c.storeDelegations(ctx, delegations)
 	if err != nil {
 		return err

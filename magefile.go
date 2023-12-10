@@ -5,11 +5,15 @@ package main
 import (
 	"fmt"
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mage/discovery"
+	"github.com/guillaumedebavelaere/tezos-delegation/tools/mage/lint"
+	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/pterm/pterm"
 	"os"
 	"os/exec"
 )
+
+const mongoContainerName = "delegation-mongodb"
 
 // Help prints the help message.
 func Help() error {
@@ -18,9 +22,10 @@ func Help() error {
 		{"mage -l", "Print every available command", "mage -l"},
 		{"help", "Show this help", "mage help"},
 		{"build", "Build every micro services and crons", "mage build"},
-		{"mongoDBStart", "starts a MongoDB Docker container", "mage mongoDBStart"},
-		{"mongoDBStop", "stops a MongoDB Docker container", "mage mongoDBStop"},
-		{"mongoDBStatus", "checks the status of the MongoDB Docker container", "mage mongoDBStatus"},
+		{"lint", "Run all linters", "mage lint"},
+		{"mongodb:start", "starts a MongoDB Docker container", "mage mongosb:start"},
+		{"mongodb:stop", "stops a MongoDB Docker container", "mage mongodb:stop"},
+		{"mongodb:status", "checks the status of the MongoDB Docker container", "mage mongodb:status"},
 	}).Render()
 
 	return nil
@@ -49,8 +54,30 @@ func executeToServices(cmd string) error {
 	return nil
 }
 
-// Run 'mage mongoDBStart' to start the MongoDB Docker container.
-func MongoDBStart() error {
+// Lint runs all linters.
+func Lint() error {
+	pterm.Info.Println("Running golint")
+
+	if err := lint.Go(".ci/lint.txt"); err != nil {
+		return err
+	}
+
+	pterm.Success.Println("Successfully finished golint")
+	pterm.Info.Println("Running golangci-lint")
+
+	if err := lint.GolangCI(".ci/ci-lint.xml"); err != nil {
+		return err
+	}
+
+	pterm.Success.Println("Successfully finished golangci-lint")
+
+	return nil
+}
+
+type MongoDB mg.Namespace
+
+// Start starts a MongoDB Docker container.
+func (m MongoDB) Start() error {
 	// Define the Docker Compose command to start the MongoDB container
 	cmd := exec.Command(
 		"docker-compose", "-f", "dev-tools/docker-compose.yml",
@@ -74,17 +101,17 @@ func MongoDBStart() error {
 	return nil
 }
 
-// Run 'mage mongoDBStop' to stop and remove the MongoDB Docker container.
-func MongoDBStop() error {
+// Stop stops and removes the MongoDB Docker container.
+func (m MongoDB) Stop() error {
 	// Define the Docker command to stop and remove the MongoDB container
-	cmd := exec.Command("docker", "stop", "delegation-mongodb")
+	cmd := exec.Command("docker", "stop", mongoContainerName)
 	if err := cmd.Run(); err != nil {
 		pterm.Error.Printfln("failed to stop MongoDB container: %v", err)
 
 		return err
 	}
 
-	cmd = exec.Command("docker", "rm", "delegation-mongodb")
+	cmd = exec.Command("docker", "rm", mongoContainerName)
 	if err := cmd.Run(); err != nil {
 		pterm.Error.Printfln("failed to remove MongoDB container: %v", err)
 
@@ -95,10 +122,10 @@ func MongoDBStop() error {
 	return nil
 }
 
-// Run 'mage mongoDBStatus' to check the status of the MongoDB Docker container.
-func MongoDBStatus() error {
+// Status checks the status of the MongoDB Docker container.
+func (m MongoDB) Status() error {
 	// Define the Docker command to check the status of the MongoDB container
-	cmd := exec.Command("docker", "inspect", "--format", "{{.State.Status}}", "delegation-mongodb")
+	cmd := exec.Command("docker", "inspect", "--format", "{{.State.Status}}", mongoContainerName)
 
 	// Run the Docker command and print the output
 	output, err := cmd.Output()
