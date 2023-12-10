@@ -2,9 +2,10 @@ package test
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/magefile/mage/sh"
 	"github.com/pterm/pterm"
-	"os"
 )
 
 // Unit helpers function to execute test command.

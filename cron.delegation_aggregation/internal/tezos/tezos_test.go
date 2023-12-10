@@ -2,13 +2,15 @@ package tezos_test
 
 import (
 	"encoding/json"
-	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos"
-	"github.com/guillaumedebavelaere/tezos-delegation/pkg/http"
+	"testing"
+	"time"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
+
+	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/http"
 )
 
 type underTest struct {

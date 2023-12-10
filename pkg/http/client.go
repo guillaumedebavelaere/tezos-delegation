@@ -1,10 +1,12 @@
 package http
 
 import (
-	"github.com/guillaumedebavelaere/tezos-delegation/pkg/option"
-	"github.com/imroc/req/v3"
 	"net/http"
 	"time"
+
+	"github.com/imroc/req/v3"
+
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/option"
 )
 
 // ClientConfig represents the configuration used when creating a new HTTP Client.

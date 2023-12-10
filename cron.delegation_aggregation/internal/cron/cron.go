@@ -6,9 +6,9 @@ import (
 
 	"go.uber.org/zap"
 
-	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore"
-	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore/model"
 	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/tezos/datastore"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/tezos/datastore/model"
 )
 
 // Cron describes the delegation aggregation Cron.

@@ -12,13 +12,6 @@ func init() {
 	service.Name = "delegation_aggregation"
 	service.GenFiles = []*gen.File{
 		{
-			Name:      "datastorer",
-			Type:      gen.Mock,
-			Dest:      "./internal/datastore",
-			Interface: []string{"Datastorer"},
-			Pkg:       "github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore",
-		},
-		{
 			Name:      "tezos",
 			Type:      gen.Mock,
 			Dest:      "./internal/tezos",

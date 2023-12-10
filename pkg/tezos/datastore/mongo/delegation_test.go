@@ -3,14 +3,12 @@ package mongo_test
 import (
 	"context"
 	"errors"
-	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore/model"
 	"time"
+
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/tezos/datastore/model"
 )
 
-var (
-	errBulkWrite = errors.New("must provide at least one element in input slice")
-	errorFindOne = errors.New("error find one")
-)
+var errBulkWrite = errors.New("must provide at least one element in input slice")
 
 func (suite *MongoTestSuite) TestDatastore_StoreDelegations() {
 	cases := []struct {

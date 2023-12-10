@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore/model"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/tezos/datastore/model"
 )
 
 // StoreDelegations store delegations in database.
@@ -51,4 +51,37 @@ func (d *Datastore) GetLatestDelegation(ctx context.Context) (*model.Delegation,
 	}
 
 	return result, nil
+}
+
+// GetDelegations get delegations for a specific year.
+func (d *Datastore) GetDelegations(ctx context.Context, year int) ([]*model.Delegation, error) {
+	filter := bson.M{}
+
+	if year != 0 {
+		filter = bson.M{
+			"$expr": bson.M{
+				"$eq": []interface{}{
+					bson.M{"$year": "$timestamp"},
+					year,
+				},
+			},
+		}
+	}
+
+	// sort to find the document with the latest timestamp
+	sort := options.Find().SetSort(bson.D{primitive.E{Key: "timestamp", Value: -1}})
+
+	cursor, err := d.delegations.Find(ctx, filter, sort)
+	if err != nil {
+		return nil, err
+	}
+
+	var results []*model.Delegation
+
+	err = cursor.All(ctx, &results)
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }

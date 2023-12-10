@@ -3,14 +3,16 @@ package tezos_test
 import (
 	"context"
 	"fmt"
-	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos"
-	"github.com/guillaumedebavelaere/tezos-delegation/pkg/terrs"
-	"github.com/jarcoal/httpmock"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/url"
 	"testing"
 	"time"
+
+	"github.com/jarcoal/httpmock"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/terrs"
 )
 
 func TestTezos_ListDelegations(t *testing.T) {
@@ -27,7 +29,8 @@ func TestTezos_ListDelegations(t *testing.T) {
 			name: "Success",
 			init: func(ut *underTest) {
 				ut.mockTransport.RegisterResponder(http.MethodGet,
-					"https://api.tezos.test/v1/operations/delegations?limit=100&select=timestamp%2Camount%2Csender%2Cblock&sort.desc=id",
+					"https://api.tezos.test/v1/operations/delegations"+
+						"?limit=100&select=timestamp%2Camount%2Csender%2Cblock&sort.desc=id",
 					httpmock.NewStringResponder(http.StatusOK, `
 						[
 							{
@@ -74,7 +77,8 @@ func TestTezos_ListDelegations(t *testing.T) {
 			name: "Error get",
 			init: func(ut *underTest) {
 				ut.mockTransport.RegisterResponder(http.MethodGet,
-					"https://api.tezos.test/v1/operations/delegations?limit=100&select=timestamp%2Camount%2Csender%2Cblock&sort.desc=id",
+					"https://api.tezos.test/v1/operations/delegations"+
+						"?limit=100&select=timestamp%2Camount%2Csender%2Cblock&sort.desc=id",
 					func(req *http.Request) (*http.Response, error) {
 						return nil, terrs.NewTestError()
 					})
@@ -83,8 +87,9 @@ func TestTezos_ListDelegations(t *testing.T) {
 			unmarshal: nil,
 			wantErr: fmt.Errorf("couldn't list delegations from tezos api error: %w",
 				&url.Error{
-					Op:  "Get",
-					URL: "https://api.tezos.test/v1/operations/delegations?limit=100&select=timestamp%2Camount%2Csender%2Cblock&sort.desc=id",
+					Op: "Get",
+					URL: "https://api.tezos.test/v1/operations/delegations" +
+						"?limit=100&select=timestamp%2Camount%2Csender%2Cblock&sort.desc=id",
 					Err: terrs.NewTestError(),
 				},
 			),
@@ -93,7 +98,8 @@ func TestTezos_ListDelegations(t *testing.T) {
 			name: "Error unmarshal",
 			init: func(ut *underTest) {
 				ut.mockTransport.RegisterResponder(http.MethodGet,
-					"https://api.tezos.test/v1/operations/delegations?limit=100&select=timestamp%2Camount%2Csender%2Cblock&sort.desc=id",
+					"https://api.tezos.test/v1/operations/delegations"+
+						"?limit=100&select=timestamp%2Camount%2Csender%2Cblock&sort.desc=id",
 					httpmock.NewStringResponder(http.StatusOK, `
 						[
 							{
@@ -127,7 +133,8 @@ func TestTezos_ListDelegations(t *testing.T) {
 			name: "Error internal",
 			init: func(ut *underTest) {
 				ut.mockTransport.RegisterResponder(http.MethodGet,
-					"https://api.tezos.test/v1/operations/delegations?limit=100&select=timestamp%2Camount%2Csender%2Cblock&sort.desc=id",
+					"https://api.tezos.test/v1/operations/delegations"+
+						"?limit=100&select=timestamp%2Camount%2Csender%2Cblock&sort.desc=id",
 					func(req *http.Request) (*http.Response, error) {
 						return httpmock.NewJsonResponse(http.StatusInternalServerError, map[string]string{
 							"code": "500",

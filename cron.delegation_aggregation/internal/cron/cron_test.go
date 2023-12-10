@@ -2,16 +2,17 @@ package cron_test
 
 import (
 	"errors"
-	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/cron"
-	datastoremock "github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore/mock"
-	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore/model"
-	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos"
-	tezosmock "github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos/mock"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
+
+	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/cron"
+	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos"
+	tezosmock "github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos/mock"
+	datastoremock "github.com/guillaumedebavelaere/tezos-delegation/pkg/tezos/datastore/mock"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/tezos/datastore/model"
 )
 
 type underTest struct {

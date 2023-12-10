@@ -29,14 +29,8 @@ func Parse(name string, config interface{}) error {
 	v.SetConfigType("yaml")
 
 	folders := []string{getEnv(appNameUpper+"_CONFIG_PATH", path)}
-	// use paths if defined
-	if folders != nil {
-		for _, folderPath := range folders {
-			v.AddConfigPath(folderPath)
-		}
-	} else {
-		// or use current path by default
-		v.AddConfigPath(".")
+	for _, folderPath := range folders {
+		v.AddConfigPath(folderPath)
 	}
 
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))

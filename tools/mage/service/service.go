@@ -2,13 +2,13 @@ package service
 
 import (
 	"fmt"
-	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mage/gen"
 	"os"
 
 	"github.com/magefile/mage/sh"
 	"github.com/pterm/pterm"
 
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mage/build"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mage/gen"
 )
 
 var (

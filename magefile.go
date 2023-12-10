@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mage/discovery"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mage/gen"
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/test"
 	"github.com/guillaumedebavelaere/tezos-delegation/tools/mage/lint"
 	"github.com/magefile/mage/mg"
@@ -16,12 +17,23 @@ import (
 
 const mongoContainerName = "delegation-mongodb"
 
+var genFiles = []*gen.File{
+	{
+		Name:      "datastorer",
+		Type:      gen.Mock,
+		Dest:      "./pkg/tezos/datastore",
+		Interface: []string{"Datastorer"},
+		Pkg:       "github.com/guillaumedebavelaere/tezos-delegation/pkg/tezos/datastore",
+	},
+}
+
 // Help prints the help message.
 func Help() error {
 	pterm.DefaultTable.WithHasHeader().WithRowSeparator("-").WithHeaderRowSeparator("-").WithData(pterm.TableData{
 		{"Command", "Description", "Usage"},
 		{"mage -l", "Print every available command", "mage -l"},
 		{"help", "Show this help", "mage help"},
+		{"all", "Runs clean, build, test:unit, lint", "mage all"},
 		{"clean", "Clean every micro services and crons", "mage clean"},
 		{"build", "Build every micro services and crons", "mage build"},
 		{"lint", "Run all linters", "mage lint"},
@@ -34,9 +46,49 @@ func Help() error {
 	return nil
 }
 
+// Do all.
+func All() error {
+	if err := Clean(); err != nil {
+		return err
+	}
+
+	if err := Gen(); err != nil {
+		return err
+	}
+
+	if err := Build(); err != nil {
+		return err
+	}
+
+	if err := Lint(); err != nil {
+		return err
+	}
+
+	if err := Test.Unit(Test{}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Build builds all services.
 func Build() error {
 	return executeToServices("build")
+}
+
+// Gen generate files.
+func Gen() error {
+	for _, file := range genFiles {
+		pterm.Info.Printfln("Generating %s %s", file.Type, file.Name)
+
+		if err := gen.Gen(file); err != nil {
+			return err
+		}
+
+		pterm.Info.Printfln("Successfully generated %s %s", file.Type, file.Name)
+	}
+
+	return executeToServices("gen")
 }
 
 // Clean cleans all services.

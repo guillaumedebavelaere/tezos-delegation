@@ -2,15 +2,15 @@ package mongo_test
 
 import (
 	"context"
-	"github.com/guillaumedebavelaere/tezos-delegation/pkg/test/docker"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/suite"
 	gomongo "go.mongodb.org/mongo-driver/mongo"
 
-	mongosvc "github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore/mongo"
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/mongo"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/test/docker"
+	mongosvc "github.com/guillaumedebavelaere/tezos-delegation/pkg/tezos/datastore/mongo"
 )
 
 type MongoTestSuite struct {

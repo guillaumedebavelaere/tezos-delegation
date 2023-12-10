@@ -2,8 +2,9 @@ package tezos
 
 import (
 	"context"
-	"github.com/guillaumedebavelaere/tezos-delegation/pkg/http"
 	"time"
+
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/http"
 )
 
 // API describes the tezos API interface.

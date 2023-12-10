@@ -9,6 +9,7 @@ type Config struct {
 	HTTP http.ClientConfig `mapstructure:",squash"`
 }
 
+// Client represents tezos client.
 type Client struct {
 	http.Client
 	cfg *Config
@@ -23,8 +24,8 @@ func NewClient(cfg *Config, options ...http.Option) API {
 }
 
 // Init initializes tezos client.
-func (h *Client) Init() error {
-	if err := h.Client.Init(); err != nil {
+func (c *Client) Init() error {
+	if err := c.Client.Init(); err != nil {
 		return err
 	}
 

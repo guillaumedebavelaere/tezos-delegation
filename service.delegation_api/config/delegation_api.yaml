@@ -1,0 +1,11 @@
+debug: true
+environment: dev
+addr: ""
+datastore:
+  mongo:
+    uri: ""
+    connectTimeout: 5s
+    heartbeatInterval: 30s
+    timeout: 2s
+    username: ""
+    password: ""

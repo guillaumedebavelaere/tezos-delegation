@@ -13,7 +13,6 @@ type Docker struct {
 	pool       *dockertest.Pool
 	containers []*Container
 	resources  []*dockertest.Resource
-	//credentials *Credentials
 }
 
 // New returns a new Docker struct.
@@ -35,7 +34,7 @@ func New(containers ...*Container) (*Docker, error) {
 		pool: pool,
 		// network:     network,
 		containers: containers,
-		//credentials: NewCredentials(),
+		// credentials: NewCredentials(),
 		resources: []*dockertest.Resource{},
 	}, nil
 }
@@ -44,7 +43,6 @@ func New(containers ...*Container) (*Docker, error) {
 func (d *Docker) Start() error {
 	for _, container := range d.containers {
 		if container.Options.Auth.Username == "" {
-			//container.Options.Auth = d.credentials.Get(DockerHUB)
 			zap.L().Info("use docker hub registry credentials", zap.String("username", container.Options.Auth.Username))
 		} else {
 			zap.L().Info("use other registry with credentials", zap.String("username", container.Options.Auth.Username))

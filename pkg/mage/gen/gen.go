@@ -2,8 +2,9 @@ package gen
 
 import (
 	"fmt"
-	"github.com/magefile/mage/sh"
 	"strings"
+
+	"github.com/magefile/mage/sh"
 )
 
 // Gen generate protobuf, mocks, and others.

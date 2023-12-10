@@ -6,11 +6,11 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/cron"
-	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/datastore/mongo"
 	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos"
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/config"
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/log"
 	mongosvc "github.com/guillaumedebavelaere/tezos-delegation/pkg/mongo"
+	"github.com/guillaumedebavelaere/tezos-delegation/pkg/tezos/datastore/mongo"
 )
 
 const appName = "delegation_aggregation"
