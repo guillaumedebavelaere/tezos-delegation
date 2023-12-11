@@ -35,7 +35,7 @@ func NewClient(cfg *ClientConfig, options ...Option) Client {
 }
 
 // Init initializes the http client.
-func (c *client) Init() error {
+func (c *client) Init() {
 	// Set options
 	for _, o := range c.options {
 		o(c)
@@ -47,8 +47,6 @@ func (c *client) Init() error {
 	if c.cfg.Debug {
 		c.c = c.c.DevMode()
 	}
-
-	return nil
 }
 
 // C returns http client.
@@ -61,11 +59,6 @@ func WithTransport(t http.RoundTripper) func(*client) {
 	return func(c *client) {
 		c.c.GetClient().Transport = t
 	}
-}
-
-// WithMarshaller is a Client option to customize marshalling.
-func WithMarshaller(marshaller func(interface{}) ([]byte, error)) func(*client) {
-	return func(c *client) { c.c.SetJsonMarshal(marshaller) }
 }
 
 // WithUnmarshaller is a Client option to customize unmarshaller.

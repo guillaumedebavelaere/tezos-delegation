@@ -24,10 +24,6 @@ func NewClient(cfg *Config, options ...http.Option) API {
 }
 
 // Init initializes tezos client.
-func (c *Client) Init() error {
-	if err := c.Client.Init(); err != nil {
-		return err
-	}
-
-	return nil
+func (c *Client) Init() {
+	c.Client.Init()
 }

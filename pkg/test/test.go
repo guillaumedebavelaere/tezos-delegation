@@ -77,6 +77,7 @@ func excludeUnwantedCodeFromCoverage() error {
 	for _, exclude := range excludes {
 		if err := sh.Run("sed",
 			"-i",
+			"",
 			exclude,
 			".ci/coverage.txt",
 		); err != nil {

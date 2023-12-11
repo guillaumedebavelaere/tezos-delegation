@@ -15,7 +15,6 @@ import (
 
 const appName = "delegation_aggregation"
 
-//nolint:funlen
 func run() int {
 	log.SetDefaultZap()
 
@@ -45,18 +44,12 @@ func run() int {
 	log.Configure(cfg.Debug)
 
 	tezosService := tezos.NewClient(&cfg.API.Tezos)
-
-	err := tezosService.Init()
-	if err != nil {
-		zap.L().Error("couldn't create new tezos service", zap.Error(err))
-
-		return 1
-	}
+	tezosService.Init()
 
 	mongoClient := mongosvc.New(&cfg.Datastore.Mongo)
 	datastore := mongo.New(mongoClient)
 
-	err = datastore.Init()
+	err := datastore.Init()
 	if err != nil {
 		zap.L().Error(
 			"couldn't initialize datastore",

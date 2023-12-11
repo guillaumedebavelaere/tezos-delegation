@@ -7,7 +7,6 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 
 	"github.com/guillaumedebavelaere/tezos-delegation/cron.delegation_aggregation/internal/tezos"
 	"github.com/guillaumedebavelaere/tezos-delegation/pkg/http"
@@ -41,7 +40,7 @@ func setupTest(t *testing.T, unmarshalFunc func(data []byte, v any) error) *unde
 		http.WithUnmarshaller(unmarshaler),
 	)
 
-	require.NoError(t, ut.client.Init())
+	ut.client.Init()
 
 	return ut
 }
@@ -64,6 +63,6 @@ func TestTezos_Init(t *testing.T) {
 
 		ut := tezos.NewClient(&tezos.Config{})
 
-		require.NoError(t, ut.Init())
+		ut.Init()
 	})
 }

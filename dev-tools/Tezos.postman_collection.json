@@ -1,0 +1,36 @@
+{
+	"info": {
+		"_postman_id": "50d0cfc5-1883-4cfc-b315-c549b434b427",
+		"name": "Tezos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27268636"
+	},
+	"item": [
+		{
+			"name": "API internal",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8088/xtz/delegations?year=2023",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8088",
+					"path": [
+						"xtz",
+						"delegations"
+					],
+					"query": [
+						{
+							"key": "year",
+							"value": "2023"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

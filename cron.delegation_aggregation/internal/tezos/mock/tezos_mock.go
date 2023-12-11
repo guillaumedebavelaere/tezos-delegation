@@ -56,11 +56,9 @@ func (mr *MockAPIMockRecorder) C() *gomock.Call {
 }
 
 // Init mocks base method.
-func (m *MockAPI) Init() error {
+func (m *MockAPI) Init() {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Init")
-	ret0, _ := ret[0].(error)
-	return ret0
+	m.ctrl.Call(m, "Init")
 }
 
 // Init indicates an expected call of Init.

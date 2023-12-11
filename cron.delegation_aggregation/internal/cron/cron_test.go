@@ -187,6 +187,20 @@ func TestCron_Run(t *testing.T) {
 			wantErr: nil,
 		},
 		{
+			name: "Success first run with no results from tezos service",
+			init: func(ut *underTest) {
+				// No delegation in datastore
+				getLatestDelegation := ut.mockDatastore.EXPECT().GetLatestDelegation(gomock.Any()).
+					Return(nil, nil)
+				// No delegations from tezos service
+				ut.mockTezosService.EXPECT().ListDelegations(
+					gomock.Any(),
+					gomock.Nil(),
+				).After(getLatestDelegation).Return([]*tezos.Delegation{}, nil)
+			},
+			wantErr: nil,
+		},
+		{
 			name: "Success second run with no results from tezos service",
 			init: func(ut *underTest) {
 				lastTimestamp := time.Date(

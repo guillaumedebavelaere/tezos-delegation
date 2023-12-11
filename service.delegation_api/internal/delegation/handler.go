@@ -53,6 +53,7 @@ func (a *APIHandler) GetDelegationsHandler(w http.ResponseWriter, r *http.Reques
 	// Convert the delegations to JSON
 	responseJSON, err := json.Marshal(delegations)
 	if err != nil {
+		zap.L().Error("error marshalling delegations to JSON", zap.Error(err))
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 
 		return
