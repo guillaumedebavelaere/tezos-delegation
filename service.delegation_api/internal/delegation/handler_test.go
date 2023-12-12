@@ -38,7 +38,10 @@ func setupTest(t *testing.T) *underTest {
 	return ut
 }
 
-var errGetDelegations = errors.New("error getting delegations")
+var (
+	errGetDelegations   = errors.New("error getting delegations")
+	errCountDelegations = errors.New("error count delegations")
+)
 
 func TestDelegation_GetDelegationsHandler(t *testing.T) {
 	t.Parallel()
@@ -55,7 +58,12 @@ func TestDelegation_GetDelegationsHandler(t *testing.T) {
 			name: "Success",
 			request: func() *http.Request {
 				// Create a request without a year parameter
-				req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/delegations", nil)
+				req, err := http.NewRequestWithContext(
+					context.Background(),
+					http.MethodGet,
+					"/delegations?page=1&size=100",
+					nil,
+				)
 				require.NoError(t, err, "Error creating request")
 
 				return req
@@ -63,6 +71,8 @@ func TestDelegation_GetDelegationsHandler(t *testing.T) {
 			init: func(ut *underTest) {
 				ut.mockDatastore.EXPECT().GetDelegations(
 					gomock.Any(),
+					gomock.Eq(1),
+					gomock.Eq(100),
 					gomock.Eq(0),
 				).Return([]*model.Delegation{
 					{
@@ -78,6 +88,11 @@ func TestDelegation_GetDelegationsHandler(t *testing.T) {
 						Block:     "56897",
 					},
 				}, nil)
+
+				ut.mockDatastore.EXPECT().GetDelegationsCount(
+					gomock.Any(),
+					gomock.Eq(0),
+				).Return(2, nil)
 			},
 			want: []*model.Delegation{
 				{
@@ -107,8 +122,15 @@ func TestDelegation_GetDelegationsHandler(t *testing.T) {
 			init: func(ut *underTest) {
 				ut.mockDatastore.EXPECT().GetDelegations(
 					gomock.Any(),
+					gomock.Eq(1),
+					gomock.Eq(100),
 					gomock.Eq(0),
 				).Return([]*model.Delegation{}, nil)
+
+				ut.mockDatastore.EXPECT().GetDelegationsCount(
+					gomock.Any(),
+					gomock.Eq(0),
+				).Return(0, nil)
 			},
 			want:           []*model.Delegation{},
 			wantStatusCode: http.StatusOK,
@@ -125,6 +147,8 @@ func TestDelegation_GetDelegationsHandler(t *testing.T) {
 			init: func(ut *underTest) {
 				ut.mockDatastore.EXPECT().GetDelegations(
 					gomock.Any(),
+					gomock.Eq(1),
+					gomock.Eq(100),
 					gomock.Eq(2020),
 				).Return([]*model.Delegation{
 					{
@@ -140,6 +164,11 @@ func TestDelegation_GetDelegationsHandler(t *testing.T) {
 						Block:     "56897",
 					},
 				}, nil)
+
+				ut.mockDatastore.EXPECT().GetDelegationsCount(
+					gomock.Any(),
+					gomock.Eq(2020),
+				).Return(2, nil)
 			},
 			want: []*model.Delegation{
 				{
@@ -166,11 +195,11 @@ func TestDelegation_GetDelegationsHandler(t *testing.T) {
 				return req
 			},
 			init:           func(ut *underTest) {},
-			wantErr:        errors.New("Bad Request\n"), //nolint:revive
+			wantErr:        errors.New("Bad Request: couldn't parse value year for query parameter deux\n"), //nolint:revive
 			wantStatusCode: http.StatusBadRequest,
 		},
 		{
-			name: "Error from datastore",
+			name: "Error GetDelegations from datastore",
 			request: func() *http.Request {
 				// Create a request without a year parameter
 				req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/delegations", nil)
@@ -181,8 +210,48 @@ func TestDelegation_GetDelegationsHandler(t *testing.T) {
 			init: func(ut *underTest) {
 				ut.mockDatastore.EXPECT().GetDelegations(
 					gomock.Any(),
+					gomock.Eq(1),
+					gomock.Eq(100),
 					gomock.Eq(0),
 				).Return(nil, errGetDelegations)
+			},
+			wantErr:        errors.New("Internal Server Error\n"), //nolint:revive
+			wantStatusCode: http.StatusInternalServerError,
+		},
+		{
+			name: "Error GetDelegationsCount from datastore",
+			request: func() *http.Request {
+				// Create a request without a year parameter
+				req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "/delegations", nil)
+				require.NoError(t, err, "Error creating request")
+
+				return req
+			},
+			init: func(ut *underTest) {
+				ut.mockDatastore.EXPECT().GetDelegations(
+					gomock.Any(),
+					gomock.Eq(1),
+					gomock.Eq(100),
+					gomock.Eq(0),
+				).Return([]*model.Delegation{
+					{
+						Timestamp: time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC),
+						Amount:    57800,
+						Delegator: "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK6",
+						Block:     "123456",
+					},
+					{
+						Timestamp: time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC),
+						Amount:    157800,
+						Delegator: "tz1aSkwEot3L2kmUvcoxzjMomb9mvBNuzFK7",
+						Block:     "56897",
+					},
+				}, nil)
+
+				ut.mockDatastore.EXPECT().GetDelegationsCount(
+					gomock.Any(),
+					gomock.Eq(0),
+				).Return(0, errCountDelegations)
 			},
 			wantErr:        errors.New("Internal Server Error\n"), //nolint:revive
 			wantStatusCode: http.StatusInternalServerError,

@@ -54,7 +54,10 @@ func (d *Datastore) GetLatestDelegation(ctx context.Context) (*model.Delegation,
 }
 
 // GetDelegations get delegations for a specific year.
-func (d *Datastore) GetDelegations(ctx context.Context, year int) ([]*model.Delegation, error) {
+func (d *Datastore) GetDelegations(
+	ctx context.Context,
+	pageNumber, pageSize, year int,
+) ([]*model.Delegation, error) {
 	filter := bson.M{}
 
 	if year != 0 {
@@ -68,8 +71,13 @@ func (d *Datastore) GetDelegations(ctx context.Context, year int) ([]*model.Dele
 		}
 	}
 
-	// sort to find the document with the latest timestamp
-	sort := options.Find().SetSort(bson.D{primitive.E{Key: "timestamp", Value: -1}})
+	skip := (pageNumber - 1) * pageSize
+
+	// sort by timestamp desc and paginate
+	sort := options.Find().
+		SetSort(bson.D{primitive.E{Key: "timestamp", Value: -1}}).
+		SetSkip(int64(skip)).
+		SetLimit(int64(pageSize))
 
 	cursor, err := d.delegations.Find(ctx, filter, sort)
 	if err != nil {
@@ -84,4 +92,27 @@ func (d *Datastore) GetDelegations(ctx context.Context, year int) ([]*model.Dele
 	}
 
 	return results, nil
+}
+
+// GetDelegationsCount get the number of delegations for a specific year.
+func (d *Datastore) GetDelegationsCount(ctx context.Context, year int) (int, error) {
+	filter := bson.M{}
+
+	if year != 0 {
+		filter = bson.M{
+			"$expr": bson.M{
+				"$eq": []interface{}{
+					bson.M{"$year": "$timestamp"},
+					year,
+				},
+			},
+		}
+	}
+
+	count, err := d.delegations.CountDocuments(ctx, filter)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(count), nil
 }

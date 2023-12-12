@@ -17,6 +17,7 @@ import (
 
 const appName = "delegation_api"
 
+//nolint:funlen
 func main() {
 	log.SetDefaultZap()
 
@@ -44,8 +45,7 @@ func main() {
 	mongoClient := mongosvc.New(&cfg.Datastore.Mongo)
 	datastore := mongo.New(mongoClient)
 
-	err := datastore.Init()
-	if err != nil {
+	if err := datastore.Init(); err != nil {
 		zap.L().Error(
 			"couldn't initialize datastore",
 			zap.Error(err),
@@ -53,6 +53,15 @@ func main() {
 
 		os.Exit(1)
 	}
+
+	defer func(datastore *mongo.Datastore) {
+		if err := datastore.Close(); err != nil {
+			zap.L().Error(
+				"couldn't close datastore",
+				zap.Error(err),
+			)
+		}
+	}(datastore)
 
 	apiDelegationHandler := delegation.New(datastore)
 
@@ -70,11 +79,11 @@ func main() {
 	}
 
 	// Start the server
-	err = server.ListenAndServe()
+	err := server.ListenAndServe()
 	if errors.Is(err, http.ErrServerClosed) {
 		zap.L().Error("server closed")
 	} else if err != nil {
 		zap.L().Error("error starting server", zap.Error(err))
-		os.Exit(1)
+		panic(err)
 	}
 }

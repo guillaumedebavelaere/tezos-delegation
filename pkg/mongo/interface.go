@@ -9,4 +9,5 @@ type Client interface {
 	C() *mongo.Client
 	Ping() error
 	Init() error
+	Close() error
 }

@@ -40,18 +40,33 @@ func (m *MockDatastorer) EXPECT() *MockDatastorerMockRecorder {
 }
 
 // GetDelegations mocks base method.
-func (m *MockDatastorer) GetDelegations(arg0 context.Context, arg1 int) ([]*model.Delegation, error) {
+func (m *MockDatastorer) GetDelegations(arg0 context.Context, arg1, arg2, arg3 int) ([]*model.Delegation, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetDelegations", arg0, arg1)
+	ret := m.ctrl.Call(m, "GetDelegations", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].([]*model.Delegation)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetDelegations indicates an expected call of GetDelegations.
-func (mr *MockDatastorerMockRecorder) GetDelegations(arg0, arg1 any) *gomock.Call {
+func (mr *MockDatastorerMockRecorder) GetDelegations(arg0, arg1, arg2, arg3 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDelegations", reflect.TypeOf((*MockDatastorer)(nil).GetDelegations), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDelegations", reflect.TypeOf((*MockDatastorer)(nil).GetDelegations), arg0, arg1, arg2, arg3)
+}
+
+// GetDelegationsCount mocks base method.
+func (m *MockDatastorer) GetDelegationsCount(arg0 context.Context, arg1 int) (int, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDelegationsCount", arg0, arg1)
+	ret0, _ := ret[0].(int)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDelegationsCount indicates an expected call of GetDelegationsCount.
+func (mr *MockDatastorerMockRecorder) GetDelegationsCount(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDelegationsCount", reflect.TypeOf((*MockDatastorer)(nil).GetDelegationsCount), arg0, arg1)
 }
 
 // GetLatestDelegation mocks base method.

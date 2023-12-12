@@ -35,3 +35,8 @@ func (d *Datastore) Init() error {
 
 	return nil
 }
+
+// Close close mongo datastore.
+func (d *Datastore) Close() error {
+	return d.client.Close()
+}

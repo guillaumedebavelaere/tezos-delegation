@@ -15,6 +15,7 @@ import (
 
 const appName = "delegation_aggregation"
 
+//nolint:funlen
 func run() int {
 	log.SetDefaultZap()
 
@@ -49,8 +50,7 @@ func run() int {
 	mongoClient := mongosvc.New(&cfg.Datastore.Mongo)
 	datastore := mongo.New(mongoClient)
 
-	err := datastore.Init()
-	if err != nil {
+	if err := datastore.Init(); err != nil {
 		zap.L().Error(
 			"couldn't initialize datastore",
 			zap.Error(err),
@@ -59,12 +59,21 @@ func run() int {
 		return 1
 	}
 
+	defer func(datastore *mongo.Datastore) {
+		err := datastore.Close()
+		if err != nil {
+			zap.L().Error(
+				"couldn't close datastore",
+				zap.Error(err),
+			)
+		}
+	}(datastore)
+
 	// Create new delegation aggregation cron
 	c := cron.New(tezosService, datastore)
 
 	// run cronjob
-	err = c.Run()
-	if err != nil {
+	if err := c.Run(); err != nil {
 		zap.L().Error(
 			"couldn't run delegation aggregation cron",
 			zap.Error(err),

@@ -10,5 +10,9 @@ import (
 type Datastorer interface {
 	StoreDelegations(ctx context.Context, delegations []*model.Delegation) error
 	GetLatestDelegation(ctx context.Context) (*model.Delegation, error)
-	GetDelegations(background context.Context, year int) ([]*model.Delegation, error)
+	GetDelegations(
+		ctx context.Context,
+		pageNumber, pageSize, year int,
+	) ([]*model.Delegation, error)
+	GetDelegationsCount(ctx context.Context, year int) (int, error)
 }

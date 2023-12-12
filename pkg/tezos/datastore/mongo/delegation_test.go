@@ -90,10 +90,10 @@ func (suite *MongoTestSuite) TestDatastore_StoreDelegations() {
 
 func (suite *MongoTestSuite) TestDatastore_GetDelegations() {
 	cases := []struct {
-		name string
-		init func(ctx context.Context)
-		want []*model.Delegation
-		year int
+		name                       string
+		init                       func(ctx context.Context)
+		want                       []*model.Delegation
+		pageNumber, pageSize, year int
 	}{
 		{
 			name: "Success empty",
@@ -126,13 +126,9 @@ func (suite *MongoTestSuite) TestDatastore_GetDelegations() {
 					Delegator: "tz1eZsUhWxawxDn5U24LGKiozLapYvAbw2yx",
 					Block:     "BMWE6vssezoqBCSSJd9M24jmExjLRyVrAr4f7sWFywGKjD3TeSG",
 				},
-				{
-					Timestamp: time.Date(2021, 12, 10, 11, 0, 1, 0, time.UTC),
-					Amount:    499836,
-					Delegator: "tz1NqVXDBf8fZNomacychFPSK1trQbi14PvA",
-					Block:     "BLxQGrPcAPAwKaeCdivBVw45Choicesen6wrmdm3NBeGsCnkLKv",
-				},
 			},
+			pageNumber: 1,
+			pageSize:   1,
 		},
 		{
 			name: "Success with year",
@@ -174,7 +170,7 @@ func (suite *MongoTestSuite) TestDatastore_GetDelegations() {
 
 			c.init(ctx)
 
-			result, err := suite.mongoSvc.GetDelegations(ctx, c.year)
+			result, err := suite.mongoSvc.GetDelegations(ctx, c.pageNumber, c.pageSize, c.year)
 			suite.Require().Equal(c.want, result)
 			suite.Require().Nil(err)
 		})
@@ -225,6 +221,74 @@ func (suite *MongoTestSuite) TestDatastore_GetLatestDelegation() {
 			c.init(ctx)
 
 			result, err := suite.mongoSvc.GetLatestDelegation(ctx)
+			suite.Require().Equal(c.want, result)
+			suite.Require().Nil(err)
+		})
+	}
+}
+
+func (suite *MongoTestSuite) TestDatastore_GetDelegationsCount() {
+	cases := []struct {
+		name string
+		init func(ctx context.Context)
+		want int
+		year int
+	}{
+		{
+			name: "Success",
+			init: func(ctx context.Context) {
+				err := suite.mongoSvc.StoreDelegations(ctx, []*model.Delegation{
+					{
+						Timestamp: time.Date(2023, 12, 10, 11, 1, 1, 0, time.UTC),
+						Amount:    124428330,
+						Delegator: "tz1eZsUhWxawxDn5U24LGKiozLapYvAbw2yx",
+						Block:     "BMWE6vssezoqBCSSJd9M24jmExjLRyVrAr4f7sWFywGKjD3TeSG",
+					},
+					{
+						Timestamp: time.Date(2021, 12, 10, 11, 0, 1, 0, time.UTC),
+						Amount:    499836,
+						Delegator: "tz1NqVXDBf8fZNomacychFPSK1trQbi14PvA",
+						Block:     "BLxQGrPcAPAwKaeCdivBVw45Choicesen6wrmdm3NBeGsCnkLKv",
+					},
+				})
+				suite.Require().Nil(err)
+			},
+			want: 2,
+		},
+		{
+			name: "Success with year",
+			init: func(ctx context.Context) {
+				err := suite.mongoSvc.StoreDelegations(ctx, []*model.Delegation{
+					{
+						Timestamp: time.Date(2023, 12, 10, 11, 1, 1, 0, time.UTC),
+						Amount:    124428330,
+						Delegator: "tz1eZsUhWxawxDn5U24LGKiozLapYvAbw2yx",
+						Block:     "BMWE6vssezoqBCSSJd9M24jmExjLRyVrAr4f7sWFywGKjD3TeSG",
+					},
+					{
+						Timestamp: time.Date(2021, 12, 10, 11, 0, 1, 0, time.UTC),
+						Amount:    499836,
+						Delegator: "tz1NqVXDBf8fZNomacychFPSK1trQbi14PvA",
+						Block:     "BLxQGrPcAPAwKaeCdivBVw45Choicesen6wrmdm3NBeGsCnkLKv",
+					},
+				})
+				suite.Require().Nil(err)
+			},
+			want: 1,
+			year: 2023,
+		},
+	}
+
+	for _, c := range cases {
+		suite.Run(c.name, func() {
+			suite.SetupTest()
+			defer suite.TearDownTest()
+
+			ctx := context.Background()
+
+			c.init(ctx)
+
+			result, err := suite.mongoSvc.GetDelegationsCount(ctx, c.year)
 			suite.Require().Equal(c.want, result)
 			suite.Require().Nil(err)
 		})
